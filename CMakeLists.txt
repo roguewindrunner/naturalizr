@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+
+add_library(naturalizr_core STATIC src/rules.cpp)
+target_include_directories(naturalizr_core PUBLIC include)
+target_compile_options(naturalizr_core PRIVATE -Wall -Wextra -Wpedantic)
+
 add_executable(naturalizr src/main.cpp)
-target_include_directories(naturalizr PRIVATE include)
-target_compile_options(naturalizr PRIVATE -Wall -Wextra -Wpedantic)
+target_link_libraries(naturalizr PRIVATE naturalizr_core)
