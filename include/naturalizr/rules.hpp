@@ -15,6 +15,16 @@ struct Rule {
     std::string replace;
 };
 
+struct Hit {
+    std::string id;
+    int count;
+};
+
+struct Result {
+    std::string      text;
+    std::vector<Hit> hits;
+};
+
 class RuleEngine {
 public:
     RuleEngine() = default;
@@ -23,8 +33,8 @@ public:
     // Throws std::runtime_error on malformed TOML or a bad regex.
     static RuleEngine from_toml(std::string_view toml_text);
 
-    std::string apply(const std::string& input) const;
-    std::string apply(const std::string& input, Script script) const;
+    Result apply(const std::string& input) const;
+    Result apply(const std::string& input, Script script) const;
     std::size_t size() const { return rules_.size(); }
 
 private:

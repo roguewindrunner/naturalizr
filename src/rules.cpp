@@ -60,17 +60,27 @@ bool rule_applies(const Rule& r, Script script) {
 
 } // namespace
 
-std::string RuleEngine::apply(const std::string& input) const {
+Result RuleEngine::apply(const std::string& input) const {
     return apply(input, detect_script(input));
 }
 
-std::string RuleEngine::apply(const std::string& input, Script script) const {
-    std::string out = input;
+Result RuleEngine::apply(const std::string& input, Script script) const {
+    Result res;
+    res.text = input;
+
     for (const auto& r : rules_) {
         if (!rule_applies(r, script)) continue;
-        out = std::regex_replace(out, r.pattern, r.replace);
+
+        const auto n = std::distance(
+            std::sregex_iterator(res.text.begin(), res.text.end(), r.pattern),
+            std::sregex_iterator());
+        if (n == 0) continue;
+
+        res.text = std::regex_replace(res.text, r.pattern, r.replace);
+        res.hits.push_back({r.id, static_cast<int>(n)});
     }
-    return out;
+
+    return res;
 }
 
 } // namespace naturalizr
