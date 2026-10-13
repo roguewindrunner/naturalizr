@@ -46,9 +46,28 @@ RuleEngine RuleEngine::from_toml(std::string_view toml_text) {
     return eng;
 }
 
+namespace {
+
+bool rule_applies(const Rule& r, Script script) {
+    if (r.lang == "any") return true;
+    switch (script) {
+        case Script::Latin:    return r.lang == "en";
+        case Script::Japanese: return r.lang == "ja";
+        case Script::Mixed:    return true;   // run everything
+    }
+    return false;
+}
+
+} // namespace
+
 std::string RuleEngine::apply(const std::string& input) const {
+    return apply(input, detect_script(input));
+}
+
+std::string RuleEngine::apply(const std::string& input, Script script) const {
     std::string out = input;
     for (const auto& r : rules_) {
+        if (!rule_applies(r, script)) continue;
         out = std::regex_replace(out, r.pattern, r.replace);
     }
     return out;

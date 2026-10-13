@@ -13,7 +13,7 @@ FetchContent_Declare(tomlplusplus
   GIT_SHALLOW    ON)
 FetchContent_MakeAvailable(tomlplusplus)
 
-add_library(naturalizr_core STATIC src/rules.cpp)
+add_library(naturalizr_core STATIC src/rules.cpp src/script.cpp)
 target_include_directories(naturalizr_core PUBLIC include)
 target_compile_options(naturalizr_core PRIVATE -Wall -Wextra -Wpedantic)
 

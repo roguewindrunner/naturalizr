@@ -28,6 +28,9 @@ int main() {
 
     std::ostringstream buf;
     buf << std::cin.rdbuf();
-    std::cout << engine.apply(buf.str());
+    const std::string input = buf.str();
+    const auto script = naturalizr::detect_script(input);
+    std::cerr << "script: " << naturalizr::script_name(script) << '\n';
+    std::cout << engine.apply(input, script);
     return 0;
 }

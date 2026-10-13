@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <naturalizr/script.hpp>
 
 namespace naturalizr {
 
@@ -23,6 +24,7 @@ public:
     static RuleEngine from_toml(std::string_view toml_text);
 
     std::string apply(const std::string& input) const;
+    std::string apply(const std::string& input, Script script) const;
     std::size_t size() const { return rules_.size(); }
 
 private:
