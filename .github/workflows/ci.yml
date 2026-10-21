@@ -1,0 +1,68 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: deps-${{ matrix.compiler }}-${{ hashFiles('CMakeLists.txt') }}
+
+      - name: Configure
+        run: |
+          CC=${{ matrix.compiler == 'gcc' && 'gcc' || 'clang' }} \
+          CXX=${{ matrix.compiler == 'gcc' && 'g++' || 'clang++' }} \
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Smoke test the CLI
+        run: |
+          echo "We must utilize this in order to delve into the data." \
+            | ./build/naturalizr --rules data/rules.toml -q > out.txt
+          grep -q "We must use this to dig into the data." out.txt
+
+  validate-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --target naturalizr
+      - name: Rules file must load
+        run: echo "" | ./build/naturalizr --rules data/rules.toml -q
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - name: Configure with ASan + UBSan
+        run: |
+          cmake -S . -B build-asan -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+      - run: cmake --build build-asan
+      - run: ctest --test-dir build-asan --output-on-failure
