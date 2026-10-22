@@ -1,11 +1,173 @@
-# lang: "en", "ja", or "any"
-# Japanese patterns: literal text and | only. No \b, no [ranges], no dot.
+# hz rules
+#
+# lang:    "en" | "ja" | "any"
+# pattern: ECMAScript regex. SINGLE-quoted so backslashes stay literal.
+# replace: $1, $2 reference capture groups.
+#
+# JAPANESE PATTERNS: literal text and | alternation ONLY.
+# No \b (no word boundaries in JA), no [ranges] (byte ranges, will corrupt
+# multi-byte chars), no . (matches one byte, slices characters apart).
+#
+# Order is significant: each rule runs on the previous rule's output.
+# Specific patterns before general ones.
 
+# =====================================================================
+# ENGLISH
+# =====================================================================
+
+# --- hedging preamble: delete entirely -------------------------------
+[[rule]]
+id = "en.filler.worth-noting"
+lang = "en"
+pattern = "\\b[Ii]t(?:'s| is|t should be noted)? (?:worth noting|important to note) that "
+replace = ""
+
+[[rule]]
+id = "en.filler.important-to"
+lang = "en"
+pattern = "\\b[Ii]t(?:'s| is) (?:crucial|essential|vital|important) to (?:understand|remember|note|recognize) that "
+replace = ""
+
+[[rule]]
+id = "en.filler.fast-paced"
+lang = "en"
+pattern = "\\b[Ii]n (?:today's|the) (?:fast-paced|ever-(?:evolving|changing)|modern|digital) (?:world|landscape|era|age), "
+replace = ""
+
+[[rule]]
+id = "en.filler.conclusion-opener"
+lang = "en"
+pattern = '\b(?:In conclusion|In summary|To summarize|Ultimately|In essence|At its core|Needless to say), '
+replace = ""
+
+[[rule]]
+id = "en.filler.that-said"
+lang = "en"
+pattern = '\b(?:That (?:being )?said|With that in mind), '
+replace = ""
+
+# --- structural tics (before vocab, they contain vocab words) --------
+[[rule]]
+id = "en.struct.not-just-but"
+lang = "en"
+pattern = '\bnot (?:just|only) ([^,;.]{1,50})[,;] but (?:also )?'
+replace = "more than $1 - it's "
+
+[[rule]]
+id = "en.struct.isnt-about"
+lang = "en"
+pattern = "\\b(?:isn't|is not) (?:just )?about ([^,;.]{1,50})[,;] it(?:'s| is) about "
+replace = "is about $1 and "
+
+[[rule]]
+id = "en.struct.lets-explore"
+lang = "en"
+pattern = "\\bLet(?:'s| us) (?:explore|dive into|take a look at|unpack|delve into) "
+replace = "Here's "
+
+[[rule]]
+id = "en.struct.plays-role"
+lang = "en"
+pattern = '\bplay(s|ed)? an? (?:crucial|vital|key|pivotal|significant|important) role in '
+replace = "matter$1 for "
+
+[[rule]]
+id = "en.struct.testament"
+lang = "en"
+pattern = '\b(?:is|stands as) a testament to '
+replace = "proves "
+
+[[rule]]
+id = "en.struct.serves-as"
+lang = "en"
+pattern = '\bserves as an? '
+replace = "is a "
+
+# --- bloated connectives ---------------------------------------------
+[[rule]]
+id = "en.conn.furthermore"
+lang = "en"
+pattern = '\b(Furthermore|Moreover|Additionally), '
+replace = "Also, "
+
+[[rule]]
+id = "en.conn.however-mid"
+lang = "en"
+pattern = ', however, '
+replace = ", but "
+
+[[rule]]
+id = "en.conn.due-to-fact"
+lang = "en"
+pattern = '\bdue to the fact that\b'
+replace = "because"
+
+[[rule]]
+id = "en.conn.in-order-to"
+lang = "en"
+pattern = '\bin order to\b'
+replace = "to"
+
+[[rule]]
+id = "en.conn.when-it-comes"
+lang = "en"
+pattern = '\bwhen it comes to\b'
+replace = "with"
+
+[[rule]]
+id = "en.conn.in-terms-of"
+lang = "en"
+pattern = '\bin terms of\b'
+replace = "for"
+
+[[rule]]
+id = "en.conn.a-number-of"
+lang = "en"
+pattern = '\ba (?:number|variety) of\b'
+replace = "several"
+
+[[rule]]
+id = "en.conn.the-fact-that"
+lang = "en"
+pattern = '\bthe fact that\b'
+replace = "that"
+
+# --- slop vocabulary --------------------------------------------------
 [[rule]]
 id = "en.vocab.delve"
 lang = "en"
-pattern = '\bdelve into\b'
+pattern = "\\bdelving into\\b"
+replace = "digging into"
+
+[[rule]]
+id = "en.vocab.delve-past"
+lang = "en"
+pattern = "\\bdelved into\\b"
+replace = "dug into"
+
+[[rule]]
+id = "en.vocab.delve-3rd"
+lang = "en"
+pattern = "\\bdelves into\\b"
+replace = "digs into"
+
+[[rule]]
+id = "en.vocab.delve-base"
+lang = "en"
+pattern = "\\bdelve into\\b"
 replace = "dig into"
+
+[[rule]]
+id = "en.vocab.dive-deep"
+lang = "en"
+pattern = '\b(?:dive|diving|dove) deep into\b'
+replace = "look closely at"
+
+[[rule]]
+id = "en.vocab.leverage"
+lang = "en"
+pattern = '\bleverag(e|es|ed|ing)\b'
+replace = "us$1"
 
 [[rule]]
 id = "en.vocab.utilize"
@@ -14,31 +176,283 @@ pattern = '\butiliz(e|es|ed|ing)\b'
 replace = "us$1"
 
 [[rule]]
-id = "en.connective.in-order-to"
+id = "en.vocab.facilitate"
 lang = "en"
-pattern = '\bin order to\b'
-replace = "to"
+pattern = "\\bfacilitat(?:e|es)\\b"
+replace = "helps"
 
 [[rule]]
-id = "ja.padding.suru-koto-ga-dekiru"
+id = "en.vocab.facilitate-ing"
+lang = "en"
+pattern = "\\bfacilitating\\b"
+replace = "helping"
+
+[[rule]]
+id = "en.vocab.facilitate-ed"
+lang = "en"
+pattern = "\\bfacilitated\\b"
+replace = "helped"
+
+[[rule]]
+id = "en.vocab.underscore"
+lang = "en"
+pattern = "\\bunderscor(?:e|es)\\b"
+replace = "highlights"
+
+[[rule]]
+id = "en.vocab.underscore-ing"
+lang = "en"
+pattern = "\\bunderscoring\\b"
+replace = "highlighting"
+
+[[rule]]
+id = "en.vocab.underscore-ed"
+lang = "en"
+pattern = "\\bunderscored\\b"
+replace = "highlighted"
+
+[[rule]]
+id = "en.vocab.embark"
+lang = "en"
+pattern = '\bembark(s|ed|ing)? (?:up)?on\b'
+replace = "start$1"
+
+[[rule]]
+id = "en.vocab.foster"
+lang = "en"
+pattern = "\\bfoster(s?)\\b"
+replace = "build$1"
+
+[[rule]]
+id = "en.vocab.foster-ed"
+lang = "en"
+pattern = "\\bfostered\\b"
+replace = "built"
+
+[[rule]]
+id = "en.vocab.foster-ing"
+lang = "en"
+pattern = "\\bfostering\\b"
+replace = "building"
+
+[[rule]]
+id = "en.vocab.navigate"
+lang = "en"
+pattern = '\bnavigat(e|es|ed|ing) the\b'
+replace = "handl$1 the"
+
+[[rule]]
+id = "en.vocab.robust"
+lang = "en"
+pattern = '\brobust\b'
+replace = "solid"
+
+[[rule]]
+id = "en.vocab.seamless"
+lang = "en"
+pattern = '\bseamless(ly)?\b'
+replace = "smooth$1"
+
+[[rule]]
+id = "en.vocab.pivotal"
+lang = "en"
+pattern = '\b(?:pivotal|paramount)\b'
+replace = "key"
+
+[[rule]]
+id = "en.vocab.myriad"
+lang = "en"
+pattern = '\ba (?:myriad|plethora|multitude) of\b'
+replace = "many"
+
+[[rule]]
+id = "en.vocab.wide-range"
+lang = "en"
+pattern = '\ba wide (?:range|array|variety) of\b'
+replace = "many"
+
+[[rule]]
+id = "en.vocab.realm"
+lang = "en"
+pattern = '\bthe (?:realm|landscape|tapestry|sphere) of\b'
+replace = "the field of"
+
+[[rule]]
+id = "en.vocab.comprehensive"
+lang = "en"
+pattern = '\bcomprehensive\b'
+replace = "complete"
+
+[[rule]]
+id = "en.vocab.intricate"
+lang = "en"
+pattern = '\bintricate\b'
+replace = "complex"
+
+[[rule]]
+id = "en.vocab.meticulous"
+lang = "en"
+pattern = '\bmeticulous(ly)?\b'
+replace = "careful$1"
+
+[[rule]]
+id = "en.vocab.transformative"
+lang = "en"
+pattern = '\b(?:transformative|game-changing|groundbreaking)\b'
+replace = "major"
+
+[[rule]]
+id = "en.vocab.ensure"
+lang = "en"
+pattern = "\\bensur(?:e|es) that\\b"
+replace = "makes sure"
+
+[[rule]]
+id = "en.vocab.ensure-ing"
+lang = "en"
+pattern = "\\bensuring that\\b"
+replace = "making sure"
+
+[[rule]]
+id = "en.vocab.ensure-ed"
+lang = "en"
+pattern = "\\bensured that\\b"
+replace = "made sure"
+
+# =====================================================================
+# JAPANESE
+# =====================================================================
+
+# --- padding verbs ----------------------------------------------------
+[[rule]]
+id = "ja.pad.suru-koto-ga-dekimasu"
 lang = "ja"
 pattern = 'することができます'
 replace = "できます"
 
 [[rule]]
-id = "ja.padding.to-iemasu"
+id = "ja.pad.suru-koto-ga-dekiru"
+lang = "ja"
+pattern = 'することができる'
+replace = "できる"
+
+[[rule]]
+id = "ja.pad.to-naatte-imasu"
+lang = "ja"
+pattern = 'となっています'
+replace = "です"
+
+[[rule]]
+id = "ja.pad.to-natte-iru"
+lang = "ja"
+pattern = 'となっている'
+replace = "である"
+
+[[rule]]
+id = "ja.pad.okonau"
+lang = "ja"
+pattern = 'を行うことで'
+replace = "することで"
+
+[[rule]]
+id = "ja.pad.wo-okonaimasu"
+lang = "ja"
+pattern = 'を行います'
+replace = "します"
+
+# --- hedging endings --------------------------------------------------
+[[rule]]
+id = "ja.hedge.to-ieru-deshou"
 lang = "ja"
 pattern = 'と言えるでしょう'
 replace = "でしょう"
 
 [[rule]]
+id = "ja.hedge.to-omowaremasu"
+lang = "ja"
+pattern = 'と思われます'
+replace = "でしょう"
+
+[[rule]]
+id = "ja.hedge.no-dewa-naideshouka"
+lang = "ja"
+pattern = 'のではないでしょうか'
+replace = "でしょう"
+
+[[rule]]
+id = "ja.hedge.juuyou-desu"
+lang = "ja"
+pattern = 'ことが重要です'
+replace = "必要です"
+
+# --- blog-slop filler: delete ----------------------------------------
+[[rule]]
 id = "ja.filler.ikagadeshita"
 lang = "ja"
-pattern = 'いかがでしたでしょうか。?'
+pattern = 'いかがでしたでしょうか。|いかがでしたか。'
 replace = ""
 
 [[rule]]
-id = "en.vocab.leverage"
-lang = "en"
-pattern = '\bleverag(e|es|ed|ing)\b'
-replace = "us$1"
+id = "ja.filler.mazu-daiichi"
+lang = "ja"
+pattern = 'まず第一に、'
+replace = ""
+
+[[rule]]
+id = "ja.filler.konkai-wa"
+lang = "ja"
+pattern = '今回は、'
+replace = ""
+
+[[rule]]
+id = "ja.filler.saigo-ni"
+lang = "ja"
+pattern = '最後になりますが、|結論から言うと、'
+replace = ""
+
+# --- stiff connectives ------------------------------------------------
+[[rule]]
+id = "ja.conn.sarani"
+lang = "ja"
+pattern = 'さらに言えば、'
+replace = "さらに、"
+
+[[rule]]
+id = "ja.conn.shikashinagara"
+lang = "ja"
+pattern = 'しかしながら、'
+replace = "しかし、"
+
+[[rule]]
+id = "ja.conn.ni-okeru"
+lang = "ja"
+pattern = 'における'
+replace = "の"
+
+[[rule]]
+id = "ja.conn.ni-kanshite"
+lang = "ja"
+pattern = 'に関しまして'
+replace = "について"
+
+[[rule]]
+id = "ja.conn.toiu-koto"
+lang = "ja"
+pattern = 'ということになります'
+replace = "ということです"
+
+# =====================================================================
+# ANY SCRIPT
+# =====================================================================
+
+[[rule]]
+id = "any.typo.curly-apostrophe"
+lang = "any"
+pattern = '[\u2018\u2019]'
+replace = "'"
+
+[[rule]]
+id = "any.typo.ellipsis"
+lang = "any"
+pattern = '\u2026'
+replace = "..."
